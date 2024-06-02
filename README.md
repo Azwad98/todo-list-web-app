@@ -240,28 +240,28 @@ The project is organized as follows:
 
 ```sh
 TODO-WEB-APP/
-├── dist/ # Contains the production build files
-├── node_modules/ # Contains the project dependencies
-├── public/ # Contains static assets
-├── src/ # Contains the source code
-│ ├── assets/ # Contains images and other static assets
-│ ├── components/ # Contains React components
-│ ├── firebaseConfig.js # Firebase configuration file
-│ ├── index.css # Global CSS styles
-│ ├── index.html # HTML template
-│ └── main.jsx # Main entry point for the React application
-├── postman/ # Contains Postman collection and environment files for API testing
+├── dist/                      # Contains the production build files
+├── node_modules/              # Contains the project dependencies
+├── public/                    # Contains static assets
+├── src/                       # Contains the source code
+│ ├── assets/                  # Contains images and other static assets
+│ ├── components/              # Contains React components
+│ ├── firebaseConfig.js        # Firebase configuration file
+│ ├── index.css                # Global CSS styles
+│ ├── index.html               # HTML template
+│ └── main.jsx                 # Main entry point for the React application
+├── postman/                   # Contains Postman collection and environment files for API testing
 │ ├── ToDoListCollection.json
 │ └── ToDoListEnvironment.json
-├── .eslintrc.cjs # ESLint configuration
-├── .gitignore # Git ignore file
-├── index.html # Root HTML file
-├── package-lock.json # Lockfile for npm
-├── package.json # Contains the project metadata and scripts
-├── README.md # Project README file
-├── server.js # Express server setup file
-├── serviceAccountKey.json # Firebase service account key file
-└── vite.config.js # Vite configuration file
+├── .eslintrc.cjs              # ESLint configuration
+├── .gitignore                 # Git ignore file
+├── index.html                 # Root HTML file
+├── package-lock.json          # Lockfile for npm
+├── package.json               # Contains the project metadata and scripts
+├── README.md                  # Project README file
+├── server.js                  # Express server setup file
+├── serviceAccountKey.json     # Firebase service account key file
+└── vite.config.js             # Vite configuration file
 ```
 
 With these steps and tools, you can set up and test the To-Do Web Application efficiently.
