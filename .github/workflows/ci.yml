@@ -1,4 +1,4 @@
-name: CI Pipeline for Postman tests
+name: CI Pipeline for To Do Web App
 
 on:
   push:
