@@ -26,3 +26,6 @@ dist-ssr
 # Firebase configuration
 src/firebaseConfig.js
 serviceAccountKey.json
+
+# Environment for confidential variables
+.env
