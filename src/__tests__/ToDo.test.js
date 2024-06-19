@@ -8,7 +8,7 @@ describe('Example Task', () => {
     id: '1',
     name: 'Test Name',
     description: 'Test Description',
-    dueDate: '2024-12-31T12:00:00.000Z',
+    dueDate: '2024-12-31T12:00',
     completed: false,
   };
 
@@ -21,7 +21,7 @@ describe('Example Task', () => {
   });
 
   describe('Rendering Tests', () => {
-    test('renders the Task Item with the correct text', () => {
+    it('renders the Task Item with the correct text', () => {
       render(
         <Todo
           todo={mockTodo}
@@ -33,10 +33,11 @@ describe('Example Task', () => {
       expect(screen.getByText('Test Name')).toBeInTheDocument();
     });
 
-    test('renders the Task Item details when expanded', () => {
+    it('renders the Task Item details when expanded and no deadline is set', () => {
+      const noDueDateTodo = { ...mockTodo, dueDate: null };
       render(
         <Todo
-          todo={mockTodo}
+          todo={noDueDateTodo}
           onToggle={mockOnToggle}
           onDelete={mockOnDelete}
           onEdit={mockOnEdit}
@@ -49,6 +50,48 @@ describe('Example Task', () => {
       // Check for the expanded details
       expect(screen.getByText('Test Description')).toBeInTheDocument();
       expect(screen.getByText('No deadline')).toBeInTheDocument();
+    });
+  });
+  describe('Interaction with task', () => {
+    it('should expand task when clicked', () => {
+      render(
+        <Todo
+          todo={mockTodo}
+          onToggle={mockOnToggle}
+          onDelete={mockOnDelete}
+          onEdit={mockOnEdit}
+        />
+      );
+
+      fireEvent.click(screen.getByRole('checkbox'));
+      expect(mockOnToggle).toHaveBeenCalledWith('1');
+    });
+
+    it('should toggle onDelete when clicking delete item', () => {
+      render(
+        <Todo
+          todo={mockTodo}
+          onToggle={mockOnToggle}
+          onDelete={mockOnDelete}
+          onEdit={mockOnEdit}
+        />
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      expect(mockOnDelete).toHaveBeenCalledWith('1');
+    });
+
+    it('should toggle onEdit when clicking edit item', () => {
+      render(
+        <Todo
+          todo={mockTodo}
+          onToggle={mockOnToggle}
+          onDelete={mockOnDelete}
+          onEdit={mockOnEdit}
+        />
+      );
+      fireEvent.click(screen.getByRole('button', { name: /edit/i }));
+      expect(mockOnEdit).toHaveBeenCalledWith(mockTodo);
     });
   });
 });
