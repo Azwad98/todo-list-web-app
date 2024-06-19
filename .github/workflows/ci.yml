@@ -1,0 +1,120 @@
+name: CI Pipeline for To Do Web App
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  setup-firebase:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Setup Firebase Config
+        run: |
+          echo "import { initializeApp } from 'firebase/app';" > src/firebaseConfig.js
+          echo "import { getFirestore } from 'firebase/firestore';" >> src/firebaseConfig.js
+          echo "const firebaseConfig = {" >> src/firebaseConfig.js
+          echo "  apiKey: '${{ secrets.FIREBASE_API_KEY }}'," >> src/firebaseConfig.js
+          echo "  authDomain: '${{ secrets.FIREBASE_AUTH_DOMAIN }}'," >> src/firebaseConfig.js
+          echo "  projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'," >> src/firebaseConfig.js
+          echo "  storageBucket: '${{ secrets.FIREBASE_STORAGE_BUCKET }}'," >> src/firebaseConfig.js
+          echo "  messagingSenderId: '${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}'," >> src/firebaseConfig.js
+          echo "  appId: '${{ secrets.FIREBASE_APP_ID }}'," >> src/firebaseConfig.js
+          echo "  measurementId: '${{ secrets.FIREBASE_MEASUREMENT_ID }}'" >> src/firebaseConfig.js
+          echo "};" >> src/firebaseConfig.js
+          echo "const app = initializeApp(firebaseConfig);" >> src/firebaseConfig.js
+          echo "const db = getFirestore(app);" >> src/firebaseConfig.js
+          echo "export { db };" >> src/firebaseConfig.js
+
+      - name: Upload Firebase Config Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: firebase-config
+          path: src/firebaseConfig.js
+
+      - name: Setup Service Account Key
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' > serviceAccountKey.json
+
+      - name: Upload Service Account Key Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: service-account-key
+          path: serviceAccountKey.json
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: setup-firebase
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Download Firebase Config Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: firebase-config
+          path: src
+
+      - name: Run Unit Tests
+        run: npm test
+
+  Postman-tests:
+    runs-on: ubuntu-latest
+    needs: setup-firebase
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Download Firebase Config Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: firebase-config
+          path: src
+
+      - name: Download Service Account Key Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: service-account-key
+          path: .
+
+      - name: Start Server
+        run: |
+          nohup npm start &
+
+      - name: Wait for Server to be Up
+        run: sleep 10
+
+      - name: Run Postman Tests
+        run: |
+          npm run build
+          newman run postman/todo-api.postman_collection.json -e postman/todo-api.postman_environment.json

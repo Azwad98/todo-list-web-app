@@ -27,7 +27,9 @@ const AddTodo = ({ onAdd }) => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
+      <label htmlFor="dueDate">Due Date</label>
       <input
+        id="dueDate"
         type="datetime-local"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
